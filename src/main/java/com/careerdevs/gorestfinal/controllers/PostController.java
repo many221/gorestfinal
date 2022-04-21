@@ -64,10 +64,6 @@ public class PostController {
 
         }catch (Exception e){
 
-            System.out.println (e.getClass ());
-
-            System.out.println (e.getMessage ());
-
             return  ApiErrorHandling.genericApiError ( e );
         }
 
@@ -136,7 +132,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteUserById(@PathVariable int id){
+    public ResponseEntity deleteById(@PathVariable int id){
 
         Post post = repository.findById ( id ).orElseThrow (() -> new ResponseStatusException ( HttpStatus.NOT_FOUND ));
 
@@ -146,7 +142,7 @@ public class PostController {
     }
 
     @DeleteMapping("/empty")
-    public ResponseEntity deleteAllUsers(){
+    public ResponseEntity deleteAll(){
 
         int repoSize = (int)repository.count ();
 
