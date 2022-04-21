@@ -2,6 +2,7 @@ package com.careerdevs.gorestfinal.controllers;
 
 import com.careerdevs.gorestfinal.models.Post;
 import com.careerdevs.gorestfinal.repositories.PostRepository;
+import com.careerdevs.gorestfinal.utilites.ApiErrorHandling;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +48,7 @@ public class PostController {
     //O> Need Help with setting this up
     //could not execute statement; SQL [n/a]; nested exception is org.hibernate.exception.DataException: could not execute statement
     @PostMapping("/{id}")
-    public ResponseEntity<Post> createPostByGoRestId(@PathVariable int id, RestTemplate restTemplate){
+    public ResponseEntity<?> createPostByGoRestId(@PathVariable int id, RestTemplate restTemplate){
 
         String postUrl = URL + "/" +id;
 
@@ -67,7 +68,7 @@ public class PostController {
 
             System.out.println (e.getMessage ());
 
-            return new ResponseEntity( e.getMessage (), HttpStatus.INTERNAL_SERVER_ERROR );
+            return  ApiErrorHandling.genericApiError ( e );
         }
 
     }
@@ -113,17 +114,14 @@ public class PostController {
 
         } catch( Exception e ){
 
-            System.out.println (e.getClass ());
-            System.out.println (e.getMessage ());
-
-            return new ResponseEntity( e.getMessage (), HttpStatus.INTERNAL_SERVER_ERROR );
+            return ApiErrorHandling.genericApiError ( e );
 
         }
 
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity updateUserById(@PathVariable int id, @RequestBody Post updatedPost){
+    public ResponseEntity updatePostById(@PathVariable int id, @RequestBody Post updatedPost){
 
         Post oldPost = repository.findById ( id ).orElseThrow (() ->new ResponseStatusException ( HttpStatus.NOT_FOUND ));
 
