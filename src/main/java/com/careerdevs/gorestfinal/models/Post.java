@@ -8,13 +8,14 @@ public class Post {
     //Look up UUID
     @Id
     @GeneratedValue( strategy = GenerationType.AUTO)
+
     private Integer id;
 
     private Integer user_id;
 
     private String title;
 
-    @Column(length = 65555)
+    @Column(length = 510)
     private String body;
 
     public Post() {

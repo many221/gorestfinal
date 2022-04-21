@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -52,13 +53,13 @@ public class PostController {
 
         try {
 ;
+            Post response = restTemplate.getForObject ( postUrl, Post.class );
+            ;
+            System.out.println (response);
 
+            assert response != null;
 
-//            repository.save ( request );
-//
-//            return new ResponseEntity<> ( request, HttpStatus.OK );
-
-            return  new ResponseEntity<Post> (repository.save ( Objects.requireNonNull ( restTemplate.getForObject ( postUrl, Post.class ) ) ),HttpStatus.CREATED );
+            return  new ResponseEntity<Post> (repository.save ( response ),HttpStatus.CREATED );
 
         }catch (Exception e){
 
@@ -75,7 +76,50 @@ public class PostController {
     @PostMapping("/fill")
     public ResponseEntity fillDatabaseWithGoRestData(RestTemplate restTemplate){
 
-        return null;
+        try {
+
+            ArrayList<Post> postArrayList = new ArrayList<>();
+
+            ResponseEntity<Post[]> response = restTemplate.getForEntity( URL,Post[].class );
+
+            postArrayList.addAll ( Arrays.asList ( Objects.requireNonNull ( response.getBody () ) ) );
+
+            int totalPageNumber = Integer.parseInt (
+                    Objects.requireNonNull (
+                            response.getHeaders ().get (
+                                    "X-Pagination-Pages" ) ).get ( 0 ) );
+
+            for (int i = 2; i <= 5; i++) {
+
+                String tempURl = URL + "?page=" + i;
+
+                Post[] pageData = restTemplate.getForObject ( tempURl,Post[].class );
+
+                assert pageData != null;
+
+                postArrayList.addAll ( Arrays.asList ( pageData));
+
+            }
+
+            for (Post post:
+                    postArrayList) {
+
+                repository.save ( post );
+            }
+
+            System.out.println (postArrayList.size ());
+
+            return new ResponseEntity ( postArrayList,HttpStatus.OK );
+
+        } catch( Exception e ){
+
+            System.out.println (e.getClass ());
+            System.out.println (e.getMessage ());
+
+            return new ResponseEntity( e.getMessage (), HttpStatus.INTERNAL_SERVER_ERROR );
+
+        }
+
     }
 
     @PutMapping("/{id}")
