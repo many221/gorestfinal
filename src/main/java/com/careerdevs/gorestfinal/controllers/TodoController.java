@@ -25,28 +25,28 @@ public class TodoController {
     private TodoRepository repository;
 
     @GetMapping
-    public ResponseEntity<Iterable<Todo>> getAllTodos(){
+    public ResponseEntity<Iterable<Todo>> getAll(){
 
         return new ResponseEntity<> ( repository.findAll (), HttpStatus.OK );
 
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Todo> getTodoById(@PathVariable int id){
+    public ResponseEntity<Todo> getById(@PathVariable int id){
 
         return new ResponseEntity<> ( repository.findById ( id ).orElseThrow (() -> new ResponseStatusException ( HttpStatus.NOT_FOUND) ), HttpStatus.OK );
 
     }
 
     @PostMapping
-    public ResponseEntity<Todo> createPost(@RequestBody Todo newTodo){
+    public ResponseEntity<Todo> create(@RequestBody Todo newTodo){
 
         return new ResponseEntity<Todo> (repository.save ( newTodo ),HttpStatus.CREATED );
 
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<?> createPostByGoRestId(@PathVariable int id, RestTemplate restTemplate){
+    public ResponseEntity<?> createByGoRestId(@PathVariable int id, RestTemplate restTemplate){
 
         String url = URL + "/" +id;
 
@@ -114,7 +114,7 @@ public class TodoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity updateoById(@PathVariable int id, @RequestBody Todo updatedTodo){
+    public ResponseEntity updateById(@PathVariable int id, @RequestBody Todo updatedTodo){
 
         Todo todo = repository.findById ( id ).orElseThrow (() ->new ResponseStatusException ( HttpStatus.NOT_FOUND ));
 
