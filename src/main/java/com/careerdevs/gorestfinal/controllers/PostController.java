@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -28,7 +29,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Post> getPostById(@PathVariable Long id){
+    public ResponseEntity<Post> getPostById(@PathVariable int id){
 
         return new ResponseEntity<> ( repository.findById ( id ).orElseThrow (() -> new ResponseStatusException ( HttpStatus.NOT_FOUND) ), HttpStatus.OK );
 
@@ -77,12 +78,40 @@ public class PostController {
         return null;
     }
 
-    //@PutMapping("/{id}")
+    @PutMapping("/{id}")
+    public ResponseEntity updateUserById(@PathVariable int id, @RequestBody Post updatedPost){
 
-    //@DeleteMapping("/{id}")
-    //@DeleteMapping("/empty")
+        Post oldPost = repository.findById ( id ).orElseThrow (() ->new ResponseStatusException ( HttpStatus.NOT_FOUND ));
 
+        if (updatedPost.getTitle () != null){
+            oldPost.setTitle ( updatedPost.getTitle () );
+        }
+        if (updatedPost.getBody () != null){
+            oldPost.setBody ( updatedPost.getBody () );
+        }
 
+        return new ResponseEntity (repository.save ( oldPost ), HttpStatus.OK );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteUserById(@PathVariable int id){
+
+        Post post = repository.findById ( id ).orElseThrow (() -> new ResponseStatusException ( HttpStatus.NOT_FOUND ));
+
+        repository.deleteById ( id );
+
+        return new ResponseEntity ( "Id: "+ post.getId ()+", Title: " +post.getTitle () + " has been deleted", HttpStatus.OK );
+    }
+
+    @DeleteMapping("/empty")
+    public ResponseEntity deleteAllUsers(){
+
+        int repoSize = (int)repository.count ();
+
+        repository.deleteAll ();
+
+        return new ResponseEntity ( repoSize + " post(s) have been deleted", HttpStatus.OK );
+    }
 
 
 }

@@ -8,9 +8,9 @@ public class Post {
     //Look up UUID
     @Id
     @GeneratedValue( strategy = GenerationType.AUTO)
-    private Long id;
+    private Integer id;
 
-    private Long user_id;
+    private Integer user_id;
 
     private String title;
 
@@ -25,11 +25,11 @@ public class Post {
         this.body = body;
     }
 
-    public long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public long getUser_id() {
+    public Integer getUser_id() {
         return user_id;
     }
 
@@ -39,6 +39,14 @@ public class Post {
 
     public String getBody() {
         return body;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
     }
 
     @Override
